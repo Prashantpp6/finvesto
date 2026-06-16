@@ -1,0 +1,101 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        brand: {
+          blue: '#00448B',
+          'blue-50': '#EBF2FA',
+          'blue-100': '#C8DCEF',
+          'blue-200': '#A0C3E3',
+          'blue-300': '#74A8D5',
+          'blue-400': '#4A8EC5',
+          'blue-600': '#00357A',
+          'blue-700': '#002A62',
+          'blue-800': '#001E49',
+          'blue-900': '#001230',
+          orange: '#FF6100',
+          'orange-50': '#FFF3EB',
+          'orange-100': '#FFD9B8',
+          'orange-200': '#FFBC85',
+          'orange-300': '#FF9E52',
+          'orange-400': '#FF801F',
+          'orange-600': '#E55600',
+          'orange-700': '#CC4D00',
+        },
+        surface: '#F7F9FC',
+        'surface-2': '#EEF3FA',
+        charcoal: '#0F1C2E',
+        'text-muted': '#5C7089',
+        'border-light': '#DDE5F0',
+      },
+      fontFamily: {
+        heading: ['"Plus Jakarta Sans"', 'Sora', 'sans-serif'],
+        body: ['Inter', '"DM Sans"', 'sans-serif'],
+        accent: ['"Playfair Display"', 'Georgia', 'serif'],
+        brand: ['"Zing Rust Base"', '"Zing Rust Demo Base"', '"Playfair Display"', 'Georgia', 'serif'],
+      },
+      fontSize: {
+        'display-xl': ['clamp(2.5rem, 5vw, 4rem)', { lineHeight: '1.1', letterSpacing: '-0.02em' }],
+        'display-lg': ['clamp(2rem, 4vw, 3rem)', { lineHeight: '1.15', letterSpacing: '-0.02em' }],
+        'display-md': ['clamp(1.5rem, 3vw, 2.25rem)', { lineHeight: '1.2', letterSpacing: '-0.02em' }],
+      },
+      boxShadow: {
+        'card': '0 1px 3px rgba(0,68,139,0.06), 0 4px 16px rgba(0,68,139,0.08)',
+        'card-hover': '0 8px 24px rgba(0,68,139,0.12), 0 2px 8px rgba(0,68,139,0.08)',
+        'blue': '0 4px 20px rgba(0,68,139,0.25)',
+        'orange': '0 4px 20px rgba(255,97,0,0.35)',
+        'nav': '0 1px 0 rgba(0,68,139,0.06), 0 4px 24px rgba(0,68,139,0.08)',
+        'glass': '0 8px 32px rgba(0,68,139,0.12)',
+      },
+      backgroundImage: {
+        'gradient-blue': 'linear-gradient(135deg, #00448B 0%, #002A62 100%)',
+        'gradient-orange': 'linear-gradient(135deg, #FF6100 0%, #E55600 100%)',
+        'gradient-hero': 'linear-gradient(135deg, #00448B 0%, #003070 60%, #001E49 100%)',
+        'gradient-cta': 'linear-gradient(135deg, #00448B 0%, #FF6100 100%)',
+        'gradient-card': 'linear-gradient(135deg, rgba(0,68,139,0.05) 0%, rgba(255,97,0,0.03) 100%)',
+      },
+      animation: {
+        'fade-up': 'fadeUp 0.7s cubic-bezier(0.22,1,0.36,1) forwards',
+        'fade-in': 'fadeIn 0.5s ease-out forwards',
+        'float': 'float 5s ease-in-out infinite',
+        'float-slow': 'float 7s ease-in-out infinite',
+        'float-delayed': 'float 5s ease-in-out 1.5s infinite',
+        'pulse-glow': 'pulseGlow 2.5s ease-in-out infinite',
+        'draw-line': 'drawLine 2s ease-out forwards',
+        'counter': 'counter 2s ease-out forwards',
+        'slide-right': 'slideRight 0.5s ease-out forwards',
+        'bounce-gentle': 'bounceGentle 2s ease-in-out infinite',
+      },
+      keyframes: {
+        fadeUp: {
+          '0%': { opacity: '0', transform: 'translateY(28px)' },
+          '100%': { opacity: '1', transform: 'translateY(0)' },
+        },
+        fadeIn: { '0%': { opacity: '0' }, '100%': { opacity: '1' } },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-12px)' },
+        },
+        pulseGlow: {
+          '0%, 100%': { boxShadow: '0 0 0 0 rgba(255,97,0,0.4)' },
+          '50%': { boxShadow: '0 0 0 12px rgba(255,97,0,0)' },
+        },
+        drawLine: {
+          '0%': { strokeDashoffset: '1000' },
+          '100%': { strokeDashoffset: '0' },
+        },
+        bounceGentle: {
+          '0%, 100%': { transform: 'translateY(0)' },
+          '50%': { transform: 'translateY(-6px)' },
+        },
+        slideRight: {
+          '0%': { opacity: '0', transform: 'translateX(-20px)' },
+          '100%': { opacity: '1', transform: 'translateX(0)' },
+        },
+      },
+    },
+  },
+  plugins: [],
+};

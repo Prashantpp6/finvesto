@@ -1,0 +1,234 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Zing Rust Base';
+  src: url('/fonts/ZingRustBase.woff2') format('woff2'),
+       url('/fonts/ZingRustBase.woff') format('woff'),
+       url('/fonts/ZingRustBase.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* Zing Rust Demo Base — fallback to the OTF you provided. Place the file at:
+   public/fonts/ZingRustDemoBase.otf
+   (rename the original to remove spaces and parenthesis for simplicity)
+*/
+@font-face {
+  font-family: 'Zing Rust Demo Base';
+  src: url('/fonts/ZingRustDemoBase.woff2') format('woff2'),
+       url('/fonts/ZingRustDemoBase.woff') format('woff'),
+       url('/fonts/ZingRustDemoBase.ttf') format('truetype'),
+       url('/fonts/ZingRustDemoBase.otf') format('opentype');
+  font-weight: 400 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', 'DM Sans', sans-serif;
+    background-color: #FFFFFF;
+    color: #0F1C2E;
+    font-size: 17px;
+    line-height: 1.7;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Plus Jakarta Sans', 'Sora', sans-serif;
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    color: #00448B;
+  }
+}
+
+@layer components {
+  /* Primary CTA — Blue to Orange gradient */
+  .btn-primary {
+    @apply inline-flex items-center gap-2 font-heading font-semibold px-6 py-3 rounded-xl
+      transition-all duration-200 active:scale-[0.97];
+    background: linear-gradient(135deg, #00448B 0%, #0057B3 100%);
+    color: white;
+    box-shadow: 0 4px 14px rgba(0, 68, 139, 0.28);
+  }
+  .btn-primary:hover {
+    background: linear-gradient(135deg, #003070 0%, #00448B 100%);
+    box-shadow: 0 6px 20px rgba(0, 68, 139, 0.38);
+    transform: translateY(-1px);
+  }
+
+  /* Gradient CTA — Blue → Orange */
+  .btn-cta {
+    @apply inline-flex items-center gap-2 font-heading font-semibold px-7 py-3.5 rounded-xl
+      text-white transition-all duration-200 active:scale-[0.97];
+    background: linear-gradient(135deg, #00448B 0%, #FF6100 100%);
+    box-shadow: 0 4px 20px rgba(0, 68, 139, 0.3), 0 2px 8px rgba(255, 97, 0, 0.2);
+  }
+  .btn-cta:hover {
+    background: linear-gradient(135deg, #003070 0%, #E55600 100%);
+    box-shadow: 0 8px 28px rgba(0, 68, 139, 0.4), 0 4px 14px rgba(255, 97, 0, 0.35);
+    transform: translateY(-2px);
+  }
+
+  /* Orange CTA */
+  .btn-orange {
+    @apply inline-flex items-center gap-2 font-heading font-semibold px-6 py-3 rounded-xl
+      text-white transition-all duration-200 active:scale-[0.97];
+    background: linear-gradient(135deg, #FF6100 0%, #E55600 100%);
+    box-shadow: 0 4px 16px rgba(255, 97, 0, 0.32);
+  }
+  .btn-orange:hover {
+    box-shadow: 0 6px 24px rgba(255, 97, 0, 0.45);
+    transform: translateY(-1px);
+  }
+
+  /* Outline */
+  .btn-outline {
+    @apply inline-flex items-center gap-2 font-heading font-semibold px-6 py-3 rounded-xl
+      border-2 transition-all duration-200 active:scale-[0.97];
+    border-color: #00448B;
+    color: #00448B;
+  }
+  .btn-outline:hover {
+    background: #00448B;
+    color: white;
+    box-shadow: 0 4px 14px rgba(0, 68, 139, 0.25);
+  }
+
+  /* Section label */
+  .section-label {
+    @apply inline-block font-heading font-semibold text-sm uppercase tracking-widest;
+    color: #FF6100;
+  }
+
+  /* Cards */
+  .card {
+    @apply bg-white rounded-2xl border border-[#DDE5F0] p-6 transition-all duration-300;
+    box-shadow: 0 1px 3px rgba(0,68,139,0.05), 0 4px 16px rgba(0,68,139,0.06);
+  }
+  .card:hover {
+    box-shadow: 0 8px 24px rgba(0,68,139,0.12), 0 2px 8px rgba(0,68,139,0.06);
+    transform: translateY(-2px);
+  }
+
+  .card-blue {
+    @apply rounded-2xl p-6 text-white;
+    background: linear-gradient(135deg, #00448B 0%, #002A62 100%);
+  }
+
+  /* Glass card */
+  .glass-card {
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 68, 139, 0.12);
+  }
+
+  /* Dark glass */
+  .glass-dark {
+    background: rgba(0, 68, 139, 0.85);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+  }
+
+  /* Layout */
+  .section-pad { @apply py-20 md:py-28; }
+  .container-max { @apply max-w-7xl mx-auto px-4 sm:px-6 lg:px-8; }
+
+  /* Input */
+  .input-field {
+    @apply w-full rounded-xl px-4 py-3 font-body text-base transition-all duration-200;
+    border: 1.5px solid #DDE5F0;
+    color: #0F1C2E;
+    background: #F7F9FC;
+    outline: none;
+  }
+  .input-field::placeholder { color: #9BAEC8; }
+  .input-field:focus {
+    border-color: #00448B;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(0, 68, 139, 0.1);
+  }
+
+  /* Nav link */
+  .nav-link {
+    position: relative;
+  }
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #FF6100;
+    transition: width 0.3s ease;
+    border-radius: 2px;
+  }
+  .nav-link:hover::after,
+  .nav-link.active::after { width: 100%; }
+
+  /* Accordion */
+  .accordion-content { max-height: 0; overflow: hidden; transition: max-height 0.4s ease; }
+  .accordion-content.open { max-height: 800px; }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: #F7F9FC; }
+::-webkit-scrollbar-thumb { background: #00448B; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #FF6100; }
+
+/* WhatsApp pulse */
+@keyframes wa-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.5); }
+  50% { box-shadow: 0 0 0 12px rgba(37, 211, 102, 0); }
+}
+.wa-pulse { animation: wa-pulse 2.5s ease-in-out infinite; }
+
+/* Chart area animations */
+@keyframes growUp {
+  from { transform: scaleY(0); transform-origin: bottom; }
+  to { transform: scaleY(1); transform-origin: bottom; }
+}
+
+/* Gradient text */
+.text-gradient-blue {
+  background: linear-gradient(135deg, #00448B, #0057B3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.text-gradient-orange {
+  background: linear-gradient(135deg, #FF6100, #FF8C42);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.text-gradient-cta {
+  background: linear-gradient(135deg, #00448B, #FF6100);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Brand font utility: ensures the brand font is used where the `font-brand` class appears.
+   If you want the font embedded, add font files to `public/fonts/` and update or add
+   @font-face declarations above (examples already exist for 'Zing Rust Base'). */
+.font-brand {
+  font-family: 'Zing Rust Demo Base', 'Zing Rust Base', 'Playfair Display', Georgia, serif;
+}

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, TrendingUp, Target, Shield, CheckCircle } from 'lucide-react';
+import { ArrowRight, TrendingUp, Target, CheckCircle } from 'lucide-react';
 import {
   AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer,
   PieChart, Pie, Cell,
@@ -85,20 +85,14 @@ export default function Hero() {
             </div>
 
             <div>
-              <h1 className="font-heading font-extrabold leading-[1.08] tracking-tight mb-5" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)' }}>
-                <span className="text-[#0F1C2E]">You May Be Closer To</span>
-                <br />
-                <span className="text-[#00448B]">Financial Freedom</span>
-                <br />
-                <span className="text-[#0F1C2E]">Than You </span>
-                <span className="relative inline-block">
-                  <span className="text-[#FF6100]">Think.</span>
-                  <svg className="absolute -bottom-1 left-0 w-full" height="4" viewBox="0 0 200 4" preserveAspectRatio="none">
-                    <path d="M0,2 Q100,0 200,2" stroke="#FF6100" strokeWidth="3" fill="none" strokeLinecap="round"/>
-                  </svg>
+              <h1 className="font-heading font-extrabold leading-[1.08] tracking-tight mb-5 w-full max-w-none" style={{ fontSize: 'clamp(2.2rem, 5vw, 3.8rem)' }}>
+                <span className="block text-[#0F1C2E] lg:whitespace-nowrap">You May Be Closer To</span>
+                <span className="block text-[#00448B]">Financial Freedom</span>
+                <span className="block text-[#0F1C2E] relative">
+                  Than You <span className="text-[#FF6100]">Think.</span>
                 </span>
               </h1>
-              <p className="text-lg text-[#5C7089] font-body leading-relaxed max-w-xl">
+              <p className="text-lg text-[#5C7089] font-body leading-relaxed max-w-2xl">
                 Whether you're starting your first SIP or optimizing an existing portfolio, we help turn financial goals into a practical investment plan.
               </p>
             </div>
@@ -125,21 +119,7 @@ export default function Hero() {
               ))}
             </div>
 
-            <div className="flex items-center gap-6 pt-4 border-t border-[#DDE5F0]">
-                {[
-                { val: '87+', label: 'Families Guided' },
-                { val: '₹1 Cr+', label: 'Under Advice' },
-                { val: '0', label: 'ULIPs Recommended' },
-              ].map((s, i) => (
-                <div key={s.label} className="flex items-center gap-6">
-                  <div>
-                    <p className="text-2xl font-heading font-extrabold" style={{ color: '#00448B' }}>{s.val}</p>
-                    <p className="text-xs text-[#5C7089] font-body">{s.label}</p>
-                  </div>
-                  {i < 2 && <div className="w-px h-10 bg-[#DDE5F0]" />}
-                </div>
-              ))}
-            </div>
+            {/* statistics removed as per spec (keeps layout compact) */}
           </div>
 
           {/* RIGHT — Premium dashboard */}
@@ -225,7 +205,7 @@ export default function Hero() {
                     <YAxis tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} />
                     <Tooltip
                       contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,68,139,0.12)', fontSize: '12px' }}
-                      formatter={(v: number) => [`₹${v}L`, 'Portfolio']}
+                      formatter={(v: any) => [`₹${v}L`, 'Portfolio']}
                     />
                     <Area
                       type="monotone"

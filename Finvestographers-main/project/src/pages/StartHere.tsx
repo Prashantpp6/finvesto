@@ -40,9 +40,9 @@ export default function StartHere() {
             <span className="w-2 h-2 rounded-full animate-pulse" style={{ background: '#FF6100' }} />
             You found us. Good decision.
           </div>
-          <h1 className="text-display-lg font-heading font-extrabold text-white mb-6 leading-tight">
-            If you're already here,{' '}
-            <span style={{ color: '#FF6100' }}>start before anything else.</span>
+          <h1 className="text-display-lg font-heading font-extrabold text-white mb-6 leading-tight text-center">
+            <span className="block">If you're already here,</span>
+            <span className="block" style={{ color: '#FF6100' }}>start before anything else.</span>
           </h1>
           <p className="text-blue-200 text-xl font-body leading-relaxed">
             This page is designed for one thing — to give you enough context to decide if we're the right fit for where you are financially.

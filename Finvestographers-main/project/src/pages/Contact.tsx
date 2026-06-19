@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { MessageCircle, Phone, Calendar, CheckCircle, Clock, MapPin, Mail, Shield, Star, ArrowRight } from 'lucide-react';
 
-const callbackSlots = ['Within 1 Hour', 'Within 3 Hours', 'Today Evening 6–9 PM', 'Tomorrow Morning 9–11 AM'];
+const callbackSlots = ['Within 4 Hours', 'This Evening', 'This Weekend'];
 const helpOptions = ["I want to start my first SIP", "Am I investing in the right funds?", "How much do I need for retirement?", "Can I save more tax?", "Do I have enough insurance?", "I want a plan for my child's future", "I want to retire early", "Something else"];
 
 export default function Contact() {
@@ -17,8 +17,9 @@ export default function Contact() {
       <section className="py-14 bg-white border-b border-[#DDE5F0]">
         <div className="container-max max-w-3xl text-center">
           <p className="section-label mb-3">Contact Us</p>
-          <h1 className="text-display-lg font-heading font-extrabold text-[#00448B] mb-5">
-            Contact Us About Your Financial Goals
+          <h1 className="text-display-lg font-heading font-extrabold text-[#00448B] mb-5 text-center">
+            <span className="block">Contact Us About Your</span>
+            <span className="block" style={{ color: '#16A34A' }}>Financial Goals</span>
           </h1>
           <p className="text-xl text-[#5C7089] font-body leading-relaxed">
             No obligation. No sales pitch. Just a practical discussion about where you stand and what your options are.
@@ -73,16 +74,10 @@ export default function Contact() {
                             style={{ accentColor: '#00448B' }} />
                           <span className="text-sm font-body text-[#0F1C2E]">{slot}</span>
                         </label>
-                      ))}
-                    </div>
-                    <button type="submit" className="btn-primary w-full justify-center py-3">
-                      <Phone size={15} strokeWidth={2} /> Request Callback
-                    </button>
-                  </form>
-                )}
-              </div>
-
-              {/* Book a slot */}
+                      <div className="flex flex-col items-center justify-center py-4">
+                        <p className="text-xs font-body mb-1" style={{ color: '#5C7089' }}>AMFI Registered MFD</p>
+                        <p className="font-heading font-bold text-[#00448B]">ARN-345397</p>
+                      </div>
               <div className="card">
                 <h2 className="text-xl font-heading font-bold text-[#00448B] mb-2">Option 3 — Book a Free 20-Min Consultation</h2>
                 <p className="text-[#5C7089] font-body text-sm mb-5">Prefer a scheduled discussion? Choose a convenient slot. Video or phone — your choice.</p>

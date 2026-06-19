@@ -11,14 +11,16 @@ const quickLinks = [
 ];
 
 const services = [
-  'Mutual Funds & SIP',
-  'Tax Consultancy & ITR Filing',
-  'Retirement Planning',
-  "Child Education Planning",
-  'Portfolio Review',
-  'Bonds & Pre-IPO Investments',
-  'Insurance Solutions',
-  'Loans',
+  { label: 'Financial Planning', id: 'financial-planning' },
+  { label: 'Mutual Funds & SIP', id: 'mutual-funds-sip' },
+  { label: 'Retirement Planning', id: 'retirement-planning' },
+  { label: 'Child Education Planning', id: 'child-education-planning' },
+  { label: 'Insurance Solutions', id: 'insurance-solutions' },
+  { label: 'Loans & Loan Against MF', id: 'loans-loan-against-mf' },
+  { label: 'Bonds, P2P Lending & Fixed Income', id: 'bonds-p2p-lending-fixed-income' },
+  { label: 'Pre-IPO Opportunities', id: 'ipo-opportunities' },
+  { label: 'Portfolio Review', id: 'portfolio-review' },
+  { label: 'TAX Consultancy & ITR Filing', id: 'tax-consultancy-itr-filing' },
 ];
 
 export default function Footer() {
@@ -37,12 +39,12 @@ export default function Footer() {
                   className="h-9 w-9 object-contain"
                 />
               </div>
-              <div>
-                <div className="font-brand font-extrabold text-base leading-none">
+                <div>
+                <div className="font-extrabold text-base leading-none">
                   <span className="text-white">FINVESTO</span>
                   <span style={{ color: '#FF6100' }}>GRAPHERS</span>
                 </div>
-                <p className="text-xs mt-0.5 font-body" style={{ color: 'rgba(200,220,239,0.7)' }}>AMFI Registered MFD</p>
+                {/* AMFI Registered label intentionally removed from logo area */}
               </div>
             </div>
             <p className="text-sm font-body leading-relaxed mb-5" style={{ color: '#A0C3E3' }}>
@@ -93,8 +95,16 @@ export default function Footer() {
             <h4 className="font-heading font-semibold text-white text-sm uppercase tracking-wider mb-5">Services</h4>
             <ul className="space-y-3">
               {services.map((s) => (
-                <li key={s}>
-                  <span className="text-sm font-body" style={{ color: '#A0C3E3' }}>{s}</span>
+                <li key={s.id}>
+                  <Link to={`/services#${s.id}`}
+                    className="flex items-center gap-2 text-sm font-body transition-colors"
+                    style={{ color: '#A0C3E3' }}
+                    onMouseEnter={(e) => { e.currentTarget.style.color = '#FF6100'; }}
+                    onMouseLeave={(e) => { e.currentTarget.style.color = '#A0C3E3'; }}
+                  >
+                    <ArrowRight size={12} />
+                    {s.label}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -127,9 +137,8 @@ export default function Footer() {
 
             {/* AMFI badge */}
             <div className="mt-6 p-4 rounded-2xl" style={{ background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)' }}>
-              <p className="text-xs font-body mb-1" style={{ color: '#74A8D5' }}>AMFI Registered</p>
-              <p className="text-white font-heading font-bold text-sm">ARN-XXXXXX</p>
-              <p className="text-xs mt-1 font-body" style={{ color: '#74A8D5' }}>NISM Series V-A Certified</p>
+              <p className="text-xs font-body mb-1" style={{ color: '#74A8D5' }}>AMFI Registered MFD</p>
+              <p className="text-white font-heading font-bold text-sm">ARN-345397</p>
             </div>
           </div>
         </div>
@@ -148,8 +157,8 @@ export default function Footer() {
               &copy; {new Date().getFullYear()} Finvestographers. All rights reserved.
             </p>
           </div>
-          <p className="mt-4 text-xs font-body leading-relaxed" style={{ color: '#4A8EC5' }}>
-            <strong className="font-semibold" style={{ color: '#74A8D5' }}>Disclaimer:</strong> Mutual fund investments are subject to market risks. Please read all scheme related documents carefully before investing. Past performance is not indicative of future results. Finvestographers is an AMFI registered Mutual Fund Distributor (ARN-XXXXXX). This website is for informational purposes only and does not constitute investment advice.
+            <p className="mt-4 text-xs font-body leading-relaxed" style={{ color: '#4A8EC5' }}>
+            <strong className="font-semibold" style={{ color: '#74A8D5' }}>Disclaimer:</strong> Mutual fund investments are subject to market risks. Please read all scheme related documents carefully before investing. Past performance is not indicative of future results. Finvestographers is an AMFI registered Mutual Fund Distributor (ARN-345397). This website is for informational purposes only and does not constitute investment advice.
           </p>
         </div>
       </div>

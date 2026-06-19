@@ -5,6 +5,7 @@ import {
   PieChart, Pie, Cell, Legend, BarChart, Bar
 } from 'recharts';
 import { ArrowRight, AlertTriangle, TrendingDown, TrendingUp, Lock, Target, Landmark, Sparkles } from 'lucide-react';
+import WealthGrowth from '../components/home/WealthGrowth';
 
 function formatCr(v: number) {
   if (v >= 10000000) return `\u20B9${(v / 10000000).toFixed(2)} Cr`;
@@ -101,7 +102,7 @@ function OnTrackCalc() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#EEF3FA" />
                     <XAxis dataKey="year" tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} tickFormatter={formatCr} width={60} />
-                    <Tooltip formatter={(v: number) => formatCr(v)} contentStyle={tooltipStyle} />
+                    <Tooltip formatter={(v: any) => formatCr(Number(v))} contentStyle={tooltipStyle} />
                     <Area type="monotone" dataKey="projected" name="Your SIP" stroke="#00448B" strokeWidth={2} fill="url(#pg1)" />
                     <Area type="monotone" dataKey="target" name="Your Target" stroke="#FF6100" strokeWidth={2} strokeDasharray="5 5" fill="none" />
                   </AreaChart>
@@ -132,7 +133,7 @@ function OnTrackCalc() {
                     <CartesianGrid strokeDasharray="3 3" stroke="#EEF3FA" />
                     <XAxis dataKey="year" tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} />
                     <YAxis tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} tickFormatter={formatCr} width={60} />
-                    <Tooltip formatter={(v: number) => formatCr(v)} contentStyle={tooltipStyle} />
+                    <Tooltip formatter={(v: any) => formatCr(Number(v))} contentStyle={tooltipStyle} />
                     <Area type="monotone" dataKey="projected" name="Your SIP" stroke="#00448B" strokeWidth={2.5} fill="url(#pg2)" />
                     <Area type="monotone" dataKey="target" name="Your Target" stroke="#FF6100" strokeWidth={2} strokeDasharray="5 5" fill="none" />
                   </AreaChart>
@@ -365,7 +366,7 @@ function SIPvsLumpSum() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#EEF3FA" />
                 <XAxis dataKey="year" tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} tickFormatter={formatCr} width={65} />
-                <Tooltip formatter={(v: number) => formatCr(v)} contentStyle={tooltipStyle} />
+                    <Tooltip formatter={(v: any) => formatCr(Number(v))} contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: '12px' }} />
                 <Area type="monotone" dataKey="SIP" stroke="#00448B" strokeWidth={2.5} fill="url(#sg3)" />
                 <Area type="monotone" dataKey="Lump Sum" stroke="#FF6100" strokeWidth={2} fill="url(#lg3)" />
@@ -497,7 +498,7 @@ function RetirementCalc() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#EEF3FA" />
                 <XAxis dataKey="year" tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} tickFormatter={formatCr} width={60} />
-                <Tooltip formatter={(v: number) => formatCr(v)} contentStyle={tooltipStyle} />
+                    <Tooltip formatter={(v: any) => formatCr(Number(v))} contentStyle={tooltipStyle} />
                 <Area type="monotone" dataKey="corpus" name="Your Corpus" stroke="#16A34A" strokeWidth={2} fill="url(#rg1)" />
                 <Area type="monotone" dataKey="target" name="Target" stroke="#FF6100" strokeWidth={2} strokeDasharray="5 5" fill="none" />
               </AreaChart>
@@ -592,7 +593,7 @@ function GoalPlanningCalc() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#EEF3FA" />
                 <XAxis dataKey="year" tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} tickFormatter={formatCr} width={65} />
-                <Tooltip formatter={(v: number) => formatCr(v)} contentStyle={tooltipStyle} />
+                <Tooltip formatter={(v: any) => formatCr(Number(v))} contentStyle={tooltipStyle} />
                 <Area type="monotone" dataKey="value" name="Projected" stroke="#FF6100" strokeWidth={2.5} fill="url(#gp1)" />
                 <Area type="monotone" dataKey="goal" name="Goal" stroke="#00448B" strokeWidth={2} strokeDasharray="5 5" fill="none" />
               </AreaChart>
@@ -702,7 +703,7 @@ function WealthGrowthCalc() {
                 <CartesianGrid strokeDasharray="3 3" stroke="#EEF3FA" />
                 <XAxis dataKey="year" tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} tickFormatter={formatCr} width={65} />
-                <Tooltip formatter={(v: number) => formatCr(v)} contentStyle={tooltipStyle} />
+                <Tooltip formatter={(v: any) => formatCr(Number(v))} contentStyle={tooltipStyle} />
                 <Legend wrapperStyle={{ fontSize: '12px' }} />
                 <Area type="monotone" dataKey="corpus" name="Total Corpus" stroke="#00448B" strokeWidth={2.5} fill="url(#wg1)" />
                 <Area type="monotone" dataKey="invested" name="Invested" stroke="#FF6100" strokeWidth={1.5} strokeDasharray="5 5" fill="none" />
@@ -754,10 +755,13 @@ export default function Calculators() {
           <p className="section-label mb-3">Financial Tools</p>
           <h1 className="text-display-lg font-heading font-extrabold text-[#00448B] mb-5">Know Your Numbers</h1>
           <p className="text-xl text-[#5C7089] font-body max-w-2xl mx-auto">
-            These calculators give you clarity \u2014 not complexity. Spend 3 minutes with any of them and you'll know more about your financial situation than most people.
+            These calculators give you clarity — not complexity. Spend 3 minutes with any of them and you'll know more about your financial situation than most people.
           </p>
         </div>
       </section>
+
+      {/* Primary calculator moved from Home: Wealth Compounding */}
+      <WealthGrowth />
 
       <section className="bg-white border-b border-[#DDE5F0] sticky top-[64px] z-40">
         <div className="container-max">

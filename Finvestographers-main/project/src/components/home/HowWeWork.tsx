@@ -35,7 +35,7 @@ export default function HowWeWork() {
           <div>
             <p className="section-label mb-3">The Process</p>
             <h2 className="text-display-md font-heading font-extrabold text-[#00448B] mb-5">
-              From First Conversation to Growing Wealth
+              From First Conversation to <span style={{ color: '#16A34A' }}>Growing Wealth</span>
             </h2>
             <p className="text-lg text-[#5C7089] font-body leading-relaxed mb-8">
               Building wealth rarely happens through one big decision. It's the result of a clear plan, disciplined execution and periodic course corrections.
@@ -53,7 +53,7 @@ export default function HowWeWork() {
           </div>
 
           <div className="relative">
-            <div className="absolute left-7 top-8 bottom-8 w-px bg-gradient-to-b from-[#C8DCEF] via-[#FF6100]/30 to-[#C8DCEF] hidden md:block" />
+            <div className="absolute left-7 top-8 bottom-8 w-px bg-gradient-to-b from-[#C8DCEF] via-[#FF6100]/30 to-[#C8DCEF] hidden md:block z-0" />
             <div className="space-y-7">
               {steps.map((step, i) => (
                 <div key={step.number} className="flex gap-6 group">
@@ -61,7 +61,7 @@ export default function HowWeWork() {
                     <div className={`w-14 h-14 rounded-2xl flex items-center justify-center font-heading font-extrabold text-sm border-2 transition-all duration-300 z-10 relative
                       ${i % 2 === 0
                         ? 'text-white border-transparent'
-                        : 'text-[#00448B] border-[#C8DCEF] bg-white group-hover:text-white group-hover:border-transparent'
+                        : 'text-[#00448B] border-[#C8DCEF] bg-white'
                       }`}
                       style={i % 2 === 0 ? { background: 'linear-gradient(135deg, #00448B, #0057B3)' } : {}}>
                       {step.number}

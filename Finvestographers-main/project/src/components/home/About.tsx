@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { CheckCircle, ArrowRight, PhoneCall, ClipboardList } from 'lucide-react';
+import { CheckCircle, ArrowRight, LifeBuoy, RefreshCw, ShieldCheck } from 'lucide-react';
 
 const philosophy = [
   "We don't sell products—we build plans",
@@ -23,27 +23,57 @@ export default function About() {
               />
               <div className="absolute inset-0 p-8 flex flex-col justify-end">
                 <div className="rounded-2xl p-5" style={{ background: 'rgba(255,255,255,0.08)', backdropFilter: 'blur(12px)', border: '1px solid rgba(255,255,255,0.15)' }}>
-                  <p className="text-white font-brand font-extrabold text-xl mb-1">Finvestographers</p>
+                  <p className="text-white font-extrabold text-xl mb-1">Finvestographers</p>
                   <p className="text-blue-200 text-sm font-body">Financial Planner & AMFI Registered MFD</p>
                 </div>
               </div>
             </div>
-            {/* Our Promise — positioned below image, no overlap */}
-            <div className="mt-5 hidden lg:block"
-              style={{ background: 'white', borderRadius: '20px', padding: '20px', border: '1px solid #DDE5F0', boxShadow: '0 8px 32px rgba(0,68,139,0.1)' }}>
-              <p className="text-xs text-[#5C7089] font-body uppercase tracking-wide mb-2">Our Promise</p>
-              <p className="text-[#00448B] font-heading font-bold text-sm leading-snug">
-                "We don't disappear after onboarding."
-              </p>
-              <div className="mt-3 flex gap-3">
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#EBF2FA' }}>
-                  <CheckCircle size={14} strokeWidth={2} style={{ color: '#00448B' }} />
-                </div>
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#FFF3EB' }}>
-                  <PhoneCall size={14} strokeWidth={2} style={{ color: '#FF6100' }} />
-                </div>
-                <div className="w-8 h-8 rounded-lg flex items-center justify-center" style={{ background: '#F0FDF4' }}>
-                  <ClipboardList size={14} strokeWidth={2} style={{ color: '#16A34A' }} />
+            {/* Our Promise — aligned to image, matching width */}
+            <div className="mt-5 hidden lg:block max-w-md mx-auto lg:mx-0"
+              style={{ background: 'white', borderRadius: '20px', padding: '24px', border: '1px solid #DDE5F0', boxShadow: '0 10px 30px rgba(0,68,139,0.08)' }}>
+              <p className="text-[11px] text-[#5C7089] font-body uppercase tracking-wide mb-3">Our Promise</p>
+
+              <p className="text-[#00448B] font-heading font-extrabold text-lg leading-tight mb-4">"We don't disappear after onboarding."</p>
+
+              <div className="mt-4 flex items-start gap-4">
+                <div className="flex-1">
+                  <div className="flex gap-4">
+                    <div
+                      className="flex flex-col items-center gap-2 p-3 rounded-lg transition-transform hover:-translate-y-1 hover:shadow-lg"
+                      style={{ background: '#EBF2FA', minWidth: 72 }}
+                      role="img"
+                      aria-label="Ongoing Support"
+                    >
+                      <div className="w-12 h-12 rounded-md flex items-center justify-center" style={{ background: 'white' }}>
+                        <LifeBuoy size={20} strokeWidth={2} style={{ color: '#00448B' }} />
+                      </div>
+                      <div className="text-xs font-semibold text-[#00448B]">Ongoing Support</div>
+                    </div>
+
+                    <div
+                      className="flex flex-col items-center gap-2 p-3 rounded-lg transition-transform hover:-translate-y-1 hover:shadow-lg"
+                      style={{ background: '#FFF3EB', minWidth: 72 }}
+                      role="img"
+                      aria-label="Regular Reviews"
+                    >
+                      <div className="w-12 h-12 rounded-md flex items-center justify-center" style={{ background: 'white' }}>
+                        <RefreshCw size={20} strokeWidth={2} style={{ color: '#FF6100' }} />
+                      </div>
+                      <div className="text-xs font-semibold text-[#FF6100]">Regular Reviews</div>
+                    </div>
+
+                    <div
+                      className="flex flex-col items-center gap-2 p-3 rounded-lg transition-transform hover:-translate-y-1 hover:shadow-lg"
+                      style={{ background: '#F0F7FF', minWidth: 72 }}
+                      role="img"
+                      aria-label="Accountability"
+                    >
+                      <div className="w-12 h-12 rounded-md flex items-center justify-center" style={{ background: 'white' }}>
+                        <ShieldCheck size={20} strokeWidth={2} style={{ color: '#00448B' }} />
+                      </div>
+                      <div className="text-xs font-semibold text-[#00448B]">Accountability</div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </div>
@@ -58,7 +88,7 @@ export default function About() {
               Finvestographers helps individuals, families and businesses achieve financial goals through mutual fund investments, bonds, pre-IPO investments, tax-saving, retirement planning, child education planning and wealth management solutions.
             </p>
             <p className="text-[#5C7089] font-body leading-relaxed mb-6">
-              We built this practice because we saw too many smart, hardworking people making the same avoidable mistakes \u2014 wrong insurance, idle savings, or investments scattered with no clear purpose.
+              We built this practice because we saw too many smart, hardworking people making the same avoidable mistakes — wrong insurance, idle savings, or investments scattered with no clear purpose.
             </p>
             <div className="space-y-3 mb-8">
               {philosophy.map((item) => (

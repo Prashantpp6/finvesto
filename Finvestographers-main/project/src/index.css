@@ -12,17 +12,10 @@
   font-display: swap;
 }
 
-/* Zing Rust Demo Base — fallback to the OTF you provided. Place the file at:
-   public/fonts/ZingRustDemoBase.otf
-   (rename the original to remove spaces and parenthesis for simplicity)
-*/
+/* Zing Rust Demo Base — use the provided OTF placed at public/fonts/ZingRustDemoBase.otf */
 @font-face {
   font-family: 'Zing Rust Demo Base';
-  src: url('/fonts/ZingRustDemoBase.woff2') format('woff2'),
-       url('/fonts/ZingRustDemoBase.woff') format('woff'),
-       url('/fonts/ZingRustDemoBase.ttf') format('truetype'),
-       url('/fonts/ZingRustDemoBase.otf') format('opentype');
-  font-weight: 400 800;
+  src: url('/fonts/ZingRustDemoBase.otf') format('opentype');
   font-style: normal;
   font-display: swap;
 }
@@ -230,5 +223,5 @@
    If you want the font embedded, add font files to `public/fonts/` and update or add
    @font-face declarations above (examples already exist for 'Zing Rust Base'). */
 .font-brand {
-  font-family: 'Zing Rust Demo Base', 'Zing Rust Base', 'Playfair Display', Georgia, serif;
+  font-family: 'Zing Rust Demo Base', serif;
 }

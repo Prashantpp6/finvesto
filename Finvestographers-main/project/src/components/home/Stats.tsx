@@ -6,8 +6,9 @@ const stats = [
   { icon: BarChart3, value: 165, suffix: '+', label: 'Investment Plans Created', bg: '#FFF3EB', color: '#FF6100' },
   { icon: Star, value: 98, suffix: '%', label: 'Client Satisfaction', bg: '#F0FDF4', color: '#16A34A' },
   { icon: Clock, value: 5, suffix: '+', label: 'Years of Experience', bg: '#EBF2FA', color: '#00448B' },
-  { icon: Target, value: 94, suffix: '%', label: 'Goal Achievement', bg: '#FFF3EB', color: '#FF6100' },
+  { icon: Target, value: 25, suffix: '+', label: 'Fund Houses', bg: '#FFF3EB', color: '#FF6100' },
 ];
+
 
 function Counter({ target, suffix }: { target: number; suffix: string }) {
   const [count, setCount] = useState(0);

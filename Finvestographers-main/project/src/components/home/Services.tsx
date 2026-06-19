@@ -90,7 +90,8 @@ export default function Services() {
             What's Keeping You Financially Stuck?
           </h2>
           <p className="text-lg text-[#5C7089] font-body max-w-2xl mx-auto">
-            Most financial problems come down to one of these — which one sounds like you?
+            <span>Most financial problems come down to one of these.</span>
+            <span className="block">Which one sounds like you?</span>
           </p>
         </div>
 

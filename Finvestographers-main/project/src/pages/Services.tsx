@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import {
   DollarSign, TrendingUp, Umbrella, Building2, Lock,
-  Rocket, PieChart, Users, ArrowRight, CheckCircle, MessageCircle
+  Rocket, PieChart, Users, ArrowRight, CheckCircle, MessageCircle, FileText
 } from 'lucide-react';
 
 const services = [
   {
     icon: DollarSign,
+    id: 'financial-planning',
     title: 'Financial Planning',
     tagline: "I'm earning well, but I'm losing too much to taxes and hidden leaks.",
     description: "We'll map your income, expenses, liabilities, and investments into a clear roadmap while legally optimizing your tax liabilities to maximize surplus wealth.",
@@ -15,14 +16,16 @@ const services = [
   },
   {
     icon: TrendingUp,
+    id: 'mutual-funds-sip',
     title: 'Mutual Funds & SIP',
     tagline: 'I want my money to work harder than my salary.',
-    description: "Whether you're starting with \u20B95,000/month or investing larger amounts, we'll create a strategy designed around your goals \u2014 not a commission chart.",
+    description: "Whether you're starting with \u20B95,000/month or investing larger amounts, we'll create a strategy designed around your goals — not a commission chart.",
     benefits: ['Curated fund selection (not 500 options)', 'SIP structure matched to your goals', 'Regular rebalancing reviews', 'Exit strategy for underperformers'],
     bg: '#FFF3EB', iconBg: '#FF6100',
   },
   {
     icon: Umbrella,
+    id: 'retirement-planning',
     title: 'Retirement Planning',
     tagline: "I don't want to work forever.",
     description: "Discover how much you'll actually need, whether you're on track, and what adjustments can improve your future lifestyle.",
@@ -30,15 +33,26 @@ const services = [
     bg: '#F0FDF4', iconBg: '#16A34A',
   },
   {
+    icon: TrendingUp,
+    id: 'child-education-planning',
+    title: "Child Education Planning",
+    tagline: "Don't let inflation erode your child's future.",
+    description: "Plan for school and college costs with dedicated funds and goal-based investment strategies.",
+    benefits: ['Education cost projections', 'Dedicated SIP planning', 'Inflation-adjusted targets', 'Fee & expense management'],
+    bg: '#FFF3EB', iconBg: '#FF6100',
+  },
+  {
     icon: Users,
+    id: 'insurance-solutions',
     title: 'Insurance Solutions',
     tagline: 'If something happens to me, will my family be financially okay?',
-    description: 'Term insurance, health insurance, personal accident, business protection and other risk-management solutions. We recommend what you need \u2014 not what pays the highest commission.',
+    description: 'Term insurance, health insurance, personal accident, business protection and other risk-management solutions. We recommend what you need — not what pays the highest commission.',
     benefits: ['Needs-based coverage audit', 'Term vs. ULIP comparison', 'Health insurance structuring', 'Family protection framework'],
     bg: '#FEF2F2', iconBg: '#DC2626',
   },
   {
     icon: Building2,
+    id: 'loans-loan-against-mf',
     title: 'Loans & Loan Against MF',
     tagline: "I need money, but I don't want to disturb my investments.",
     description: 'Explore funding options while keeping long-term financial goals in focus. Use your portfolio as leverage without breaking compounding.',
@@ -47,7 +61,8 @@ const services = [
   },
   {
     icon: Lock,
-    title: 'Bonds, P2P Lending & Fixed Income',
+    id: 'bonds-p2p-lending-fixed-income',
+    title: 'Bonds\nP2P Lending\n& Fixed Income',
     tagline: "My money is sitting in FDs, but I feel it's not growing enough.",
     description: 'For investors seeking stability, predictable income and portfolio balance. Better returns than FDs with managed risk.',
     benefits: ['Corporate bond opportunities', 'Government securities access', 'Fixed-income ladder strategy', 'Tax-efficient debt allocation'],
@@ -55,6 +70,7 @@ const services = [
   },
   {
     icon: Rocket,
+    id: 'ipo-opportunities',
     title: 'Pre-IPO Opportunities',
     tagline: 'I want access to opportunities most investors never hear about.',
     description: 'Evaluate select pre-IPO opportunities and understand both the potential rewards and risks before investing. High conviction, not hype.',
@@ -63,11 +79,21 @@ const services = [
   },
   {
     icon: PieChart,
+    id: 'portfolio-review',
     title: 'Portfolio Review',
     tagline: "I have investments everywhere. I don't know if they're helping me.",
     description: 'Review existing mutual funds, insurance policies, fixed-income products and overall asset allocation. Find out what to keep, what to fix, and what to drop.',
     benefits: ['Holdings overlap analysis', 'Fee & expense audit', 'Risk concentration check', 'Actionable improvement plan'],
     bg: '#F0FFFE', iconBg: '#0891B2',
+  },
+  {
+    icon: FileText,
+    id: 'tax-consultancy-itr-filing',
+    title: 'TAX Consultancy & ITR Filing',
+    tagline: 'I want to save tax legally and file my returns without stress.',
+    description: 'We help salaried professionals, business owners, and investors optimize taxes, claim eligible deductions, and file returns accurately and on time. Stay compliant while keeping more of what you earn.',
+    benefits: ['Income tax planning', 'Tax-saving investment strategy', 'Accurate ITR filing support', 'Capital gains & investment tax guidance'],
+    bg: '#F6F0FF', iconBg: '#7C3AED',
   },
 ];
 
@@ -82,7 +108,7 @@ export default function ServicesPage() {
             Services That Move You Forward
           </h1>
           <p className="text-xl text-[#5C7089] font-body leading-relaxed">
-            Every service is built around one question: what's keeping you financially stuck? Pick the one that sounds like you.
+            Most financial problems come down to one of these. Which one sounds like you?
           </p>
         </div>
       </section>
@@ -91,19 +117,21 @@ export default function ServicesPage() {
       <section className="section-pad bg-[#F7F9FC]">
         <div className="container-max">
           <div className="space-y-6">
-            {services.map((svc, i) => (
-              <div key={svc.title}
+            {services.map((svc) => (
+              <div id={svc.id} key={svc.title}
                 className="bg-white rounded-2xl border border-[#DDE5F0] overflow-hidden transition-all duration-300 hover:shadow-card-hover"
                 style={{ boxShadow: '0 1px 3px rgba(0,68,139,0.05), 0 4px 16px rgba(0,68,139,0.06)' }}>
                 <div className="grid md:grid-cols-[auto_1fr] gap-0">
                   {/* Icon column */}
-                  <div className="p-8 flex flex-col items-center justify-center md:min-w-[200px]"
+                  <div className="p-8 flex flex-col items-center justify-center md:w-[200px]"
                     style={{ background: svc.bg }}>
                     <div className="w-14 h-14 rounded-2xl flex items-center justify-center mb-4"
                       style={{ background: svc.iconBg }}>
                       <svc.icon size={24} strokeWidth={1.5} color="white" />
                     </div>
-                    <h2 className="text-lg font-heading font-bold text-[#00448B] text-center">{svc.title}</h2>
+                    <h2 className="text-lg font-heading font-bold text-[#00448B] text-center">
+                      {svc.title.includes('\n') ? svc.title.split('\n').map((l, i) => <span key={i} className="block">{l}</span>) : svc.title}
+                    </h2>
                   </div>
 
                   {/* Content */}

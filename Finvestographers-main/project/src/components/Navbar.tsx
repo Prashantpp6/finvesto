@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Phone, MessageCircle, ChevronDown } from 'lucide-react';
+import { Menu, X, MessageCircle } from 'lucide-react';
 
 const navLinks = [
   { label: 'Home', path: '/' },
@@ -77,16 +77,7 @@ export default function Navbar() {
 
             {/* Right actions */}
             <div className="hidden lg:flex items-center gap-3 flex-shrink-0">
-              {/* Phone */}
-              <a
-                href="tel:+919XXXXXXXXX"
-                className="flex items-center gap-2 text-sm font-body font-medium text-[#0F1C2E] hover:text-[#00448B] transition-colors whitespace-nowrap"
-              >
-                <div className="w-7 h-7 rounded-full bg-[#EBF2FA] flex items-center justify-center flex-shrink-0">
-                  <Phone size={13} strokeWidth={2} className="text-[#00448B]" />
-                </div>
-                Mob- 8962692479
-              </a>
+                {/* Phone removed per design — keep WhatsApp and CTA aligned */}
 
               {/* WhatsApp */}
               <a
@@ -135,13 +126,6 @@ export default function Navbar() {
                 </Link>
               ))}
               <div className="pt-3 border-t border-[#DDE5F0] mt-2 space-y-3">
-                <a
-                  href="tel:+918962692479"
-                  className="flex items-center gap-3 px-4 py-3 text-[#0F1C2E] font-body font-medium text-sm"
-                >
-                  <Phone size={16} strokeWidth={2} className="text-[#00448B]" />
-                  Mob- 8962692479
-                </a>
                 <a
                   href="https://wa.me/919XXXXXXXXX"
                   target="_blank"

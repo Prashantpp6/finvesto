@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { ChevronLeft, ChevronRight, Quote } from 'lucide-react';
+import { useRef, useState, useEffect, useCallback } from 'react';
+import { Quote } from 'lucide-react';
 
 const testimonials = [
   { name: 'Rahul Sharma', role: 'Senior Software Engineer', location: 'Pune', aum: '₹28L+', initials: 'RS', bg: '#00448B',
@@ -21,67 +21,194 @@ const testimonials = [
 ];
 
 export default function Testimonials() {
-  const [current, setCurrent] = useState(0);
-  const perPage = 3;
-  const totalPages = Math.ceil(testimonials.length / perPage);
-  const visible = testimonials.slice(current * perPage, current * perPage + perPage);
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [activeIndex, setActiveIndex] = useState(0);
+
+  /* ── sync activeIndex when user scrolls (native or touch) ── */
+  const syncIndex = useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const cardWidth = (track.firstElementChild as HTMLElement)?.offsetWidth ?? 0;
+    const gap = 20;
+    const idx = Math.round(track.scrollLeft / (cardWidth + gap));
+    setActiveIndex(Math.min(idx, testimonials.length - 1));
+  }, []);
+
+  useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    track.addEventListener('scroll', syncIndex, { passive: true });
+    return () => track.removeEventListener('scroll', syncIndex);
+  }, [syncIndex]);
+
+  /* ── scroll to a specific card index ── */
+  const scrollTo = useCallback((idx: number) => {
+    const track = trackRef.current;
+    if (!track) return;
+    const cardWidth = (track.firstElementChild as HTMLElement)?.offsetWidth ?? 0;
+    const gap = 20;
+    track.scrollTo({ left: idx * (cardWidth + gap), behavior: 'smooth' });
+    setActiveIndex(idx);
+  }, []);
+
+  /* ── mouse drag support ── */
+  const dragState = useRef({ dragging: false, startX: 0, scrollLeft: 0, moved: false });
+
+  const onMouseDown = (e: React.MouseEvent) => {
+    const track = trackRef.current;
+    if (!track) return;
+    dragState.current = { dragging: true, startX: e.pageX - track.offsetLeft, scrollLeft: track.scrollLeft, moved: false };
+    track.style.scrollSnapType = 'none';
+    track.style.cursor = 'grabbing';
+  };
+
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (!dragState.current.dragging) return;
+    const track = trackRef.current;
+    if (!track) return;
+    const x = e.pageX - track.offsetLeft;
+    const walk = (x - dragState.current.startX) * 1.2;
+    if (Math.abs(walk) > 4) dragState.current.moved = true;
+    track.scrollLeft = dragState.current.scrollLeft - walk;
+  };
+
+  const onMouseUp = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    dragState.current.dragging = false;
+    track.style.cursor = 'grab';
+    /* re-enable snap after drag ends */
+    requestAnimationFrame(() => {
+      track.style.scrollSnapType = 'x mandatory';
+      syncIndex();
+    });
+  };
 
   return (
     <section className="section-pad bg-[#F7F9FC]">
+      {/* scoped styles — scrollbar hide + snap + grab cursor */}
+      <style>{`
+        .testi-track {
+          scroll-snap-type: x mandatory;
+          -webkit-overflow-scrolling: touch;
+          cursor: grab;
+        }
+        .testi-track:active { cursor: grabbing; }
+        .testi-track::-webkit-scrollbar { display: none; }
+        .testi-track { -ms-overflow-style: none; scrollbar-width: none; }
+        .testi-card {
+          scroll-snap-align: start;
+          /* desktop: 2 full + 0.45 peek */
+          flex: 0 0 calc((100% - 40px) / 2.45);
+        }
+        @media (max-width: 1023px) {
+          /* tablet: 1 full + 0.45 peek */
+          .testi-card { flex: 0 0 calc((100% - 20px) / 1.45); }
+        }
+        @media (max-width: 767px) {
+          /* mobile: 1 full + 0.25 peek */
+          .testi-card { flex: 0 0 calc(100% / 1.25); }
+        }
+        .testi-card-dim {
+          opacity: 0.55;
+          transform: scale(0.97);
+          transition: opacity 400ms ease, transform 400ms ease;
+          pointer-events: auto;
+        }
+        .testi-card-dim:hover, .testi-card-dim:focus-visible {
+          opacity: 0.75;
+          transform: scale(0.98);
+        }
+        .testi-card-active {
+          opacity: 1;
+          transform: scale(1);
+          transition: opacity 400ms ease, transform 400ms ease;
+        }
+      `}</style>
+
       <div className="container-max">
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-end mb-12 gap-4">
-          <div>
-            <p className="section-label mb-3">Client Reviews</p>
-            <h2 className="text-display-md font-heading font-extrabold text-[#00448B]">
-              Real People. Real Results.
-            </h2>
-          </div>
-          <div className="flex gap-3">
-            {[{ action: () => setCurrent((c) => Math.max(0, c - 1)), disabled: current === 0, icon: ChevronLeft },
-              { action: () => setCurrent((c) => Math.min(totalPages - 1, c + 1)), disabled: current === totalPages - 1, icon: ChevronRight }
-            ].map(({ action, disabled, icon: Icon }, i) => (
-              <button key={i} onClick={action} disabled={disabled}
-                className="w-11 h-11 rounded-xl border-2 flex items-center justify-center transition-all duration-200 disabled:opacity-30 disabled:cursor-not-allowed"
-                style={{ borderColor: disabled ? '#DDE5F0' : '#00448B', color: disabled ? '#9BAEC8' : '#00448B' }}
-                onMouseEnter={(e) => { if (!disabled) { (e.target as HTMLElement).style.background = '#00448B'; (e.target as HTMLElement).style.color = 'white'; }}}
-                onMouseLeave={(e) => { if (!disabled) { (e.target as HTMLElement).style.background = 'transparent'; (e.target as HTMLElement).style.color = '#00448B'; }}}
-              >
-                <Icon size={18} />
-              </button>
-            ))}
-          </div>
+        {/* Header */}
+        <div className="mb-12">
+          <p className="section-label mb-3">Client Reviews</p>
+          <h2 className="text-display-md font-heading font-extrabold text-[#00448B]">
+            Real People. Real Results.
+          </h2>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {visible.map((t) => (
-            <div key={t.name} className="card group">
-              <Quote size={26} style={{ color: '#EBF2FA' }} className="mb-4" />
-              <p className="text-[#0F1C2E] font-accent italic text-[15px] leading-relaxed mb-6 opacity-80">
-                "{t.text}"
-              </p>
-              <div className="flex items-center gap-3 pt-4 border-t border-[#DDE5F0]">
-                <div className="w-10 h-10 rounded-full flex items-center justify-center font-heading font-bold text-sm text-white flex-shrink-0"
-                  style={{ background: t.bg }}>
-                  {t.initials}
+        {/* Scrollable track — padded so box-shadows are not clipped */}
+        <div
+          ref={trackRef}
+          className="testi-track flex gap-5 overflow-x-auto py-4 -my-4 select-none"
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseUp}
+          role="list"
+          aria-label="Client testimonials"
+        >
+          {testimonials.map((t, i) => {
+            const isActive = i === activeIndex;
+            /* cards beyond active+1 are also dimmed; clicked card snaps into view */
+            const isDim = i !== activeIndex;
+            return (
+              <div
+                key={t.name}
+                role="listitem"
+                tabIndex={0}
+                aria-label={`Testimonial by ${t.name}`}
+                className={`testi-card card flex flex-col justify-between ${isDim ? 'testi-card-dim' : 'testi-card-active'}`}
+                onClick={() => {
+                  /* only scroll on click, not at end of drag */
+                  if (!dragState.current.moved) scrollTo(i);
+                }}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); scrollTo(i); }
+                  if (e.key === 'ArrowRight') scrollTo(Math.min(i + 1, testimonials.length - 1));
+                  if (e.key === 'ArrowLeft') scrollTo(Math.max(i - 1, 0));
+                }}
+                style={{ outline: isActive ? '2px solid #00448B' : 'none', outlineOffset: '3px' }}
+              >
+                <div>
+                  <Quote size={26} style={{ color: '#EBF2FA' }} className="mb-4" />
+                  <p className="text-[#0F1C2E] font-accent italic text-[15px] leading-relaxed mb-6 opacity-80">
+                    "{t.text}"
+                  </p>
                 </div>
-                <div className="flex-1 min-w-0">
-                  <p className="font-heading font-bold text-sm text-[#0F1C2E] truncate">{t.name}</p>
-                  <p className="text-xs text-[#5C7089] font-body">{t.role}, {t.location}</p>
-                </div>
-                <div className="text-right flex-shrink-0">
-                  <p className="text-xs font-heading font-semibold" style={{ color: '#16A34A' }}>{t.aum}</p>
-                  <p className="text-[10px] text-[#9BAEC8] font-body">Under advice</p>
+                <div className="flex items-center gap-3 pt-4 border-t border-[#DDE5F0]">
+                  <div
+                    className="w-10 h-10 rounded-full flex items-center justify-center font-heading font-bold text-sm text-white flex-shrink-0"
+                    style={{ background: t.bg }}
+                  >
+                    {t.initials}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="font-heading font-bold text-sm text-[#0F1C2E] truncate">{t.name}</p>
+                    <p className="text-xs text-[#5C7089] font-body">{t.role}, {t.location}</p>
+                  </div>
+                  <div className="text-right flex-shrink-0">
+                    <p className="text-xs font-heading font-semibold" style={{ color: '#16A34A' }}>{t.aum}</p>
+                    <p className="text-[10px] text-[#9BAEC8] font-body">Under advice</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
-        <div className="flex justify-center gap-2 mt-8">
-          {Array.from({ length: totalPages }).map((_, i) => (
-            <button key={i} onClick={() => setCurrent(i)}
-              className="h-2 rounded-full transition-all duration-300"
-              style={{ width: i === current ? '32px' : '8px', background: i === current ? '#00448B' : '#C8DCEF' }} />
+        {/* Dot pagination */}
+        <div className="flex justify-center gap-2 mt-8" aria-label="Testimonial navigation">
+          {testimonials.map((_, i) => (
+            <button
+              key={i}
+              onClick={() => scrollTo(i)}
+              aria-label={`Go to testimonial ${i + 1}`}
+              aria-current={i === activeIndex ? 'true' : undefined}
+              className="h-2 rounded-full transition-all duration-300 focus-visible:outline focus-visible:outline-2 focus-visible:outline-[#00448B]"
+              style={{
+                width: i === activeIndex ? '32px' : '8px',
+                background: i === activeIndex ? '#00448B' : '#C8DCEF',
+              }}
+            />
           ))}
         </div>
       </div>

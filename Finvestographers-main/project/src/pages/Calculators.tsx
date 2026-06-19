@@ -5,12 +5,11 @@ import {
   PieChart, Pie, Cell, Legend, BarChart, Bar
 } from 'recharts';
 import { ArrowRight, AlertTriangle, TrendingDown, TrendingUp, Lock, Target, Landmark, Sparkles } from 'lucide-react';
-import WealthGrowth from '../components/home/WealthGrowth';
 
 function formatCr(v: number) {
-  if (v >= 10000000) return `\u20B9${(v / 10000000).toFixed(2)} Cr`;
-  if (v >= 100000) return `\u20B9${(v / 100000).toFixed(1)}L`;
-  return `\u20B9${Math.round(v).toLocaleString('en-IN')}`;
+  if (v >= 10000000) return `₹${(v / 10000000).toFixed(2)} Cr`;
+  if (v >= 100000) return `₹${(v / 100000).toFixed(1)}L`;
+  return `₹${Math.round(v).toLocaleString('en-IN')}`;
 }
 function calcSIP(m: number, r: number, y: number) {
   const rM = r / 100 / 12;
@@ -20,6 +19,75 @@ function calcSIP(m: number, r: number, y: number) {
 function calcLumpSum(p: number, r: number, y: number) { return p * Math.pow(1 + r / 100, y); }
 
 const tooltipStyle = { borderRadius: '12px', border: 'none', boxShadow: '0 4px 20px rgba(0,68,139,0.12)', fontSize: '12px' };
+
+interface SyncedInputProps {
+  label: string;
+  value: number;
+  min: number;
+  max: number;
+  step: number;
+  setter: (v: number) => void;
+  accent: string;
+  inputType: 'currency' | 'percentage' | 'years' | 'number';
+}
+
+function SyncedNumberInput({ label, value, min, max, step, setter, accent, inputType }: SyncedInputProps) {
+  const [inputVal, setInputVal] = useState(value.toString());
+
+  const formatDisplay = (v: number): string => {
+    if (inputType === 'currency') return v.toLocaleString('en-IN');
+    if (inputType === 'percentage') return v.toFixed(inputType === 'percentage' && step < 1 ? 2 : 1);
+    if (inputType === 'years') return v.toFixed(0);
+    return v.toFixed(0);
+  };
+
+  const parseInput = (text: string): number => {
+    const num = parseFloat(text.replace(/,/g, ''));
+    return isNaN(num) ? value : Math.max(min, Math.min(max, num));
+  };
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const text = e.target.value;
+    setInputVal(text);
+    const parsed = parseInput(text);
+    if (!isNaN(parsed)) setter(parsed);
+  };
+
+  const handleInputBlur = () => {
+    const parsed = parseInput(inputVal);
+    setInputVal(formatDisplay(parsed));
+    setter(parsed);
+  };
+
+  const handleSliderChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newVal = Number(e.target.value);
+    setter(newVal);
+    setInputVal(formatDisplay(newVal));
+  };
+
+  return (
+    <div>
+      <div className="flex justify-between items-center mb-3">
+        <label className="text-sm font-heading font-semibold text-[#0F1C2E]">{label}</label>
+        <div className="flex items-center gap-2">
+          <span className="text-sm font-heading font-bold" style={{ color: accent }}>
+            {inputType === 'currency' && '₹'}
+            {formatDisplay(value)}
+            {inputType === 'percentage' && '%'}
+            {inputType === 'years' && ' yrs'}
+          </span>
+        </div>
+      </div>
+      <input type="range" min={min} max={max} step={step} value={value}
+        onChange={handleSliderChange}
+        className="w-full h-2 rounded-full cursor-pointer mb-2" style={{ accentColor: accent }} />
+      <input type="text" value={`${inputType === 'currency' ? '₹' : ''}${inputVal}${inputType === 'percentage' ? '%' : ''}`}
+        onChange={handleInputChange} onBlur={handleInputBlur}
+        className="w-full px-3 py-2 text-sm border border-[#DDE5F0] rounded-lg focus:outline-none focus:border-[#00448B] font-heading"
+        placeholder={`Enter ${inputType === 'currency' ? 'amount' : inputType === 'percentage' ? 'percentage' : 'value'}`} />
+    </div>
+  );
+}
 
 function OnTrackCalc() {
   const [age, setAge] = useState(30);
@@ -58,22 +126,10 @@ function OnTrackCalc() {
 
       <div className="grid md:grid-cols-2 gap-8">
         <div className="space-y-5">
-          {[
-            { label: 'Current Age', value: age, min: 20, max: 55, step: 1, fmt: (v: number) => `${v} yrs`, setter: setAge, accent: '#00448B' },
-            { label: 'Monthly SIP', value: sip, min: 1000, max: 100000, step: 1000, fmt: (v: number) => `\u20B9${v.toLocaleString('en-IN')}`, setter: setSip, accent: '#00448B' },
-            { label: 'Target Corpus', value: targetCr, min: 0.25, max: 10, step: 0.25, fmt: (v: number) => `\u20B9${v} Cr`, setter: setTargetCr, accent: '#FF6100' },
-            { label: 'Expected Return', value: rateP, min: 6, max: 18, step: 0.5, fmt: (v: number) => `${v}%`, setter: setRateP, accent: '#FF6100' },
-          ].map(({ label, value, min, max, step, fmt, setter, accent }) => (
-            <div key={label}>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-sm font-heading font-semibold text-[#0F1C2E]">{label}</label>
-                <span className="text-sm font-heading font-bold" style={{ color: accent }}>{fmt(value)}</span>
-              </div>
-              <input type="range" min={min} max={max} step={step} value={value}
-                onChange={(e) => setter(Number(e.target.value))}
-                className="w-full h-2 rounded-full cursor-pointer" style={{ accentColor: accent }} />
-            </div>
-          ))}
+          <SyncedNumberInput label="Current Age" value={age} min={20} max={55} step={1} inputType="years" setter={setAge} accent="#00448B" />
+          <SyncedNumberInput label="Monthly SIP" value={sip} min={1000} max={100000} step={1000} inputType="currency" setter={setSip} accent="#00448B" />
+          <SyncedNumberInput label="Target Corpus" value={targetCr} min={0.25} max={10} step={0.25} inputType="number" setter={setTargetCr} accent="#FF6100" />
+          <SyncedNumberInput label="Expected Return" value={rateP} min={6} max={18} step={0.5} inputType="percentage" setter={setRateP} accent="#FF6100" />
 
           <div className={`rounded-2xl p-4 border ${onTrack ? 'border-green-200' : 'border-red-200'}`}
             style={{ background: onTrack ? '#F0FDF4' : '#FEF2F2' }}>
@@ -190,27 +246,15 @@ function FDCalc() {
 
       <div className="grid md:grid-cols-2 gap-8">
         <div className="space-y-5">
-          {[
-            { label: 'FD Interest Rate', value: fdRate, min: 4, max: 9, step: 0.25, fmt: (v: number) => `${v}%`, setter: setFdRate, accent: '#00448B' },
-            { label: 'Inflation Rate', value: inflation, min: 3, max: 10, step: 0.25, fmt: (v: number) => `${v}%`, setter: setInflation, accent: '#DC2626' },
-          ].map(({ label, value, min, max, step, fmt, setter, accent }) => (
-            <div key={label}>
-              <div className="flex justify-between mb-2">
-                <label className="text-sm font-heading font-semibold text-[#0F1C2E]">{label}</label>
-                <span className="text-sm font-heading font-bold" style={{ color: accent }}>{fmt(value)}</span>
-              </div>
-              <input type="range" min={min} max={max} step={step} value={value}
-                onChange={(e) => setter(Number(e.target.value))}
-                className="w-full h-2 rounded-full cursor-pointer" style={{ accentColor: accent }} />
-            </div>
-          ))}
+          <SyncedNumberInput label="FD Interest Rate" value={fdRate} min={4} max={9} step={0.25} inputType="percentage" setter={setFdRate} accent="#00448B" />
+          <SyncedNumberInput label="Inflation Rate" value={inflation} min={3} max={10} step={0.25} inputType="percentage" setter={setInflation} accent="#DC2626" />
 
           <div>
             <label className="block text-sm font-heading font-semibold text-[#0F1C2E] mb-2">Income Tax Slab</label>
-            <div className="flex gap-2">
-              {[10, 20, 30].map((s) => (
+            <div className="flex gap-2 flex-wrap">
+              {[0, 10, 20, 30].map((s) => (
                 <button key={s} onClick={() => setTaxSlab(s)}
-                  className="flex-1 py-2 rounded-lg text-sm font-heading font-semibold transition-colors"
+                  className="flex-1 min-w-12 py-2 rounded-lg text-sm font-heading font-semibold transition-colors"
                   style={taxSlab === s ? { background: '#00448B', color: 'white' } : { background: '#EBF2FA', color: '#00448B' }}>
                   {s}%
                 </button>
@@ -218,15 +262,7 @@ function FDCalc() {
             </div>
           </div>
 
-          <div>
-            <div className="flex justify-between mb-2">
-              <label className="text-sm font-heading font-semibold text-[#0F1C2E]">FD Amount</label>
-              <span className="text-sm font-heading font-bold text-[#00448B]">\u20B9{principal.toLocaleString('en-IN')}</span>
-            </div>
-            <input type="range" min={10000} max={1000000} step={10000} value={principal}
-              onChange={(e) => setPrincipal(Number(e.target.value))}
-              className="w-full h-2 rounded-full cursor-pointer" style={{ accentColor: '#00448B' }} />
-          </div>
+          <SyncedNumberInput label="FD Amount" value={principal} min={10000} max={1000000} step={10000} inputType="currency" setter={setPrincipal} accent="#00448B" />
 
           <div className={`rounded-2xl p-5 border ${isNeg ? 'border-red-200' : 'border-green-200'}`}
             style={{ background: isNeg ? '#FEF2F2' : '#F0FDF4' }}>
@@ -256,7 +292,7 @@ function FDCalc() {
             </ResponsiveContainer>
           </div>
           <div className="space-y-2">
-            <h4 className="font-heading font-semibold text-[#00448B] text-sm">\u20B9{(principal / 100000).toFixed(1)}L after 10 years:</h4>
+            <h4 className="font-heading font-semibold text-[#00448B] text-sm">₹{(principal / 100000).toFixed(1)}L after 10 years:</h4>
             {[
               { label: 'In FD (after tax)', value: after10FD, color: '#0F1C2E' },
               { label: 'Real Value (inflation-adjusted)', value: principal * Math.pow(1 + (taxAdjusted - inflation) / 100, 10), color: isNeg ? '#DC2626' : '#16A34A' },
@@ -312,22 +348,10 @@ function SIPvsLumpSum() {
 
       <div className="grid md:grid-cols-2 gap-8">
         <div className="space-y-5">
-          {[
-            { label: 'Monthly SIP', value: monthly, min: 1000, max: 100000, step: 1000, fmt: (v: number) => `\u20B9${v.toLocaleString('en-IN')}`, setter: setMonthly, accent: '#00448B' },
-            { label: 'Lump Sum Amount', value: lump, min: 10000, max: 5000000, step: 10000, fmt: formatCr, setter: setLump, accent: '#FF6100' },
-            { label: 'Annual Return', value: rate, min: 6, max: 18, step: 0.5, fmt: (v: number) => `${v}%`, setter: setRate, accent: '#00448B' },
-            { label: 'Duration', value: years, min: 1, max: 30, step: 1, fmt: (v: number) => `${v} yrs`, setter: setYears, accent: '#FF6100' },
-          ].map(({ label, value, min, max, step, fmt, setter, accent }) => (
-            <div key={label}>
-              <div className="flex justify-between mb-2">
-                <label className="text-sm font-heading font-semibold text-[#0F1C2E]">{label}</label>
-                <span className="text-sm font-heading font-bold" style={{ color: accent }}>{fmt(value)}</span>
-              </div>
-              <input type="range" min={min} max={max} step={step} value={value}
-                onChange={(e) => setter(Number(e.target.value))}
-                className="w-full h-2 rounded-full cursor-pointer" style={{ accentColor: accent }} />
-            </div>
-          ))}
+          <SyncedNumberInput label="Monthly SIP" value={monthly} min={1000} max={100000} step={1000} inputType="currency" setter={setMonthly} accent="#00448B" />
+          <SyncedNumberInput label="Lump Sum Amount" value={lump} min={10000} max={5000000} step={10000} inputType="currency" setter={setLump} accent="#FF6100" />
+          <SyncedNumberInput label="Annual Return" value={rate} min={6} max={18} step={0.5} inputType="percentage" setter={setRate} accent="#00448B" />
+          <SyncedNumberInput label="Duration" value={years} min={1} max={30} step={1} inputType="years" setter={setYears} accent="#FF6100" />
 
           <div className="grid grid-cols-2 gap-3">
             {[
@@ -444,24 +468,12 @@ function RetirementCalc() {
 
       <div className="grid md:grid-cols-2 gap-8">
         <div className="space-y-5">
-          {[
-            { label: 'Current Age', value: currentAge, min: 25, max: 50, step: 1, fmt: (v: number) => `${v} yrs`, setter: setCurrentAge, accent: '#00448B' },
-            { label: 'Monthly Expenses', value: monthlyExp, min: 10000, max: 200000, step: 5000, fmt: (v: number) => `\u20B9${v.toLocaleString('en-IN')}`, setter: setMonthlyExp, accent: '#FF6100' },
-            { label: 'Existing Corpus', value: existingCorpus, min: 0, max: 5000000, step: 50000, fmt: (v: number) => `\u20B9${v.toLocaleString('en-IN')}`, setter: setExistingCorpus, accent: '#16A34A' },
-            { label: 'Retirement Age', value: retireAge, min: 45, max: 65, step: 1, fmt: (v: number) => `${v} yrs`, setter: setRetireAge, accent: '#00448B' },
-            { label: 'Inflation', value: inflation, min: 3, max: 10, step: 0.5, fmt: (v: number) => `${v}%`, setter: setInflation, accent: '#DC2626' },
-            { label: 'Expected Return', value: returnRate, min: 6, max: 15, step: 0.5, fmt: (v: number) => `${v}%`, setter: setReturnRate, accent: '#16A34A' },
-          ].map(({ label, value, min, max, step, fmt, setter, accent }) => (
-            <div key={label}>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-sm font-heading font-semibold text-[#0F1C2E]">{label}</label>
-                <span className="text-sm font-heading font-bold" style={{ color: accent }}>{fmt(value)}</span>
-              </div>
-              <input type="range" min={min} max={max} step={step} value={value}
-                onChange={(e) => setter(Number(e.target.value))}
-                className="w-full h-2 rounded-full cursor-pointer" style={{ accentColor: accent }} />
-            </div>
-          ))}
+          <SyncedNumberInput label="Current Age" value={currentAge} min={25} max={50} step={1} inputType="years" setter={setCurrentAge} accent="#00448B" />
+          <SyncedNumberInput label="Monthly Expenses" value={monthlyExp} min={10000} max={200000} step={5000} inputType="currency" setter={setMonthlyExp} accent="#FF6100" />
+          <SyncedNumberInput label="Existing Corpus" value={existingCorpus} min={0} max={5000000} step={50000} inputType="currency" setter={setExistingCorpus} accent="#16A34A" />
+          <SyncedNumberInput label="Retirement Age" value={retireAge} min={45} max={65} step={1} inputType="years" setter={setRetireAge} accent="#00448B" />
+          <SyncedNumberInput label="Inflation" value={inflation} min={3} max={10} step={0.5} inputType="percentage" setter={setInflation} accent="#DC2626" />
+          <SyncedNumberInput label="Expected Return" value={returnRate} min={6} max={15} step={0.5} inputType="percentage" setter={setReturnRate} accent="#16A34A" />
         </div>
 
         <div className="space-y-5">
@@ -482,7 +494,7 @@ function RetirementCalc() {
           {gap > 0 && (
             <div className="rounded-xl p-4 border border-[#DDE5F0]" style={{ background: '#FFF8F0' }}>
               <p className="text-xs text-[#5C7089] font-body mb-1">Monthly SIP needed to close the gap</p>
-              <p className="text-2xl font-heading font-extrabold text-[#FF6100]">\u20B9{Math.round(monthlySIPNeeded).toLocaleString('en-IN')}</p>
+              <p className="text-2xl font-heading font-extrabold text-[#FF6100]">₹{Math.round(monthlySIPNeeded).toLocaleString('en-IN')}</p>
               <p className="text-[10px] text-[#9BAEC8] font-body mt-1">for {yearsToRetire} years at {returnRate}% return</p>
             </div>
           )}
@@ -510,82 +522,85 @@ function RetirementCalc() {
   );
 }
 
-function GoalPlanningCalc() {
-  const [goalAmount, setGoalAmount] = useState(5000000);
-  const [years, setYears] = useState(10);
+function CostOfDelaySIPCalc() {
+  const [monthlySIP, setMonthlySIP] = useState(10000);
   const [returnRate, setReturnRate] = useState(12);
-  const [existingSavings, setExistingSavings] = useState(200000);
+  const [investmentYears, setInvestmentYears] = useState(20);
+  const [delayYears, setDelayYears] = useState(5);
 
-  const futureExisting = existingSavings * Math.pow(1 + returnRate / 100, years);
-  const gap = goalAmount - futureExisting;
-  const monthlySIP = gap > 0 ? (() => {
-    const rM = returnRate / 100 / 12;
-    const n = years * 12;
-    if (rM === 0) return gap / n;
-    return gap / (((Math.pow(1 + rM, n) - 1) / rM) * (1 + rM));
-  })() : 0;
+  const yearsImmediately = investmentYears;
+  const yearsDelayed = Math.max(0, investmentYears - delayYears);
 
-  const totalInvested = existingSavings + monthlySIP * 12 * years;
-  const totalReturns = goalAmount - totalInvested;
+  const futureValueImmediate = useMemo(() => calcSIP(monthlySIP, returnRate, yearsImmediately), [monthlySIP, returnRate, yearsImmediately]);
+  const futureValueDelayed = useMemo(() => calcSIP(monthlySIP, returnRate, yearsDelayed), [monthlySIP, returnRate, yearsDelayed]);
+  
+  const costOfDelay = futureValueImmediate - futureValueDelayed;
+  const percentageLoss = futureValueImmediate > 0 ? (costOfDelay / futureValueImmediate) * 100 : 0;
 
   const chartData = useMemo(() => {
     const pts = [];
-    for (let y = 0; y <= years; y += Math.max(1, Math.floor(years / 8))) {
-      const projected = existingSavings * Math.pow(1 + returnRate / 100, y) + (monthlySIP > 0 ? calcSIP(monthlySIP, returnRate, y) : 0);
-      pts.push({ year: `Year ${y}`, value: Math.round(projected), goal: Math.round(goalAmount) });
+    for (let y = 0; y <= investmentYears; y++) {
+      const immediateValue = y <= yearsImmediately ? calcSIP(monthlySIP, returnRate, y) : futureValueImmediate;
+      const delayedValue = y <= delayYears ? 0 : calcSIP(monthlySIP, returnRate, y - delayYears);
+      pts.push({
+        year: y,
+        'Start Today': Math.round(immediateValue),
+        'Start Later': Math.round(delayedValue),
+      });
     }
     return pts;
-  }, [existingSavings, returnRate, monthlySIP, goalAmount, years]);
+  }, [monthlySIP, returnRate, investmentYears, delayYears, yearsImmediately, yearsDelayed, futureValueImmediate]);
+
+  const insightMessage = delayYears >= 1 
+    ? `Waiting ${delayYears} year${delayYears > 1 ? 's' : ''} to start investing could reduce your final wealth by ${formatCr(costOfDelay)}.`
+    : 'Start investing today to maximize the power of compounding.';
 
   return (
-    <div className="card border border-[#DDE5F0]">
-      <div className="flex items-start gap-4 mb-6">
-        <div className="p-3 rounded-2xl flex-shrink-0" style={{ background: '#FFF3EB' }}>
-          <Target size={22} strokeWidth={1.5} style={{ color: '#FF6100' }} />
-        </div>
-        <div>
-          <h2 className="text-xl font-heading font-bold text-[#00448B]">Goal Planning Calculator</h2>
-          <p className="text-sm text-[#5C7089] font-body">Find the SIP amount needed for any financial goal</p>
-        </div>
-      </div>
-
-      <div className="grid md:grid-cols-2 gap-8">
-        <div className="space-y-5">
-          {[
-            { label: 'Goal Amount', value: goalAmount, min: 100000, max: 50000000, step: 100000, fmt: (v: number) => `\u20B9${v.toLocaleString('en-IN')}`, setter: setGoalAmount, accent: '#FF6100' },
-            { label: 'Time Horizon', value: years, min: 1, max: 30, step: 1, fmt: (v: number) => `${v} years`, setter: setYears, accent: '#00448B' },
-            { label: 'Expected Return', value: returnRate, min: 6, max: 18, step: 0.5, fmt: (v: number) => `${v}%`, setter: setReturnRate, accent: '#16A34A' },
-            { label: 'Existing Savings', value: existingSavings, min: 0, max: 10000000, step: 50000, fmt: (v: number) => `\u20B9${v.toLocaleString('en-IN')}`, setter: setExistingSavings, accent: '#00448B' },
-          ].map(({ label, value, min, max, step, fmt, setter, accent }) => (
-            <div key={label}>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-sm font-heading font-semibold text-[#0F1C2E]">{label}</label>
-                <span className="text-sm font-heading font-bold" style={{ color: accent }}>{fmt(value)}</span>
-              </div>
-              <input type="range" min={min} max={max} step={step} value={value}
-                onChange={(e) => setter(Number(e.target.value))}
-                className="w-full h-2 rounded-full cursor-pointer" style={{ accentColor: accent }} />
-            </div>
-          ))}
-
-          <div className="grid grid-cols-2 gap-3">
-            <div className="rounded-xl p-4" style={{ background: '#FFF3EB' }}>
-              <p className="text-xs text-[#5C7089] font-body mb-1">Monthly SIP Needed</p>
-              <p className="text-2xl font-heading font-extrabold text-[#FF6100]">\u20B9{Math.round(monthlySIP).toLocaleString('en-IN')}</p>
-            </div>
-            <div className="rounded-xl p-4" style={{ background: '#F0FDF4' }}>
-              <p className="text-xs text-[#5C7089] font-body mb-1">Returns Earned</p>
-              <p className="font-heading font-bold text-[#16A34A]">{formatCr(Math.max(0, totalReturns))}</p>
-            </div>
+    <div className="space-y-8">
+      <div className="card border border-[#DDE5F0]">
+        <div className="flex items-start gap-4 mb-6">
+          <div className="p-3 rounded-2xl flex-shrink-0" style={{ background: '#FFF3EB' }}>
+            <TrendingUp size={22} strokeWidth={1.5} style={{ color: '#FF6100' }} />
+          </div>
+          <div>
+            <h2 className="text-xl font-heading font-bold text-[#00448B]">Cost of Delay SIP Calculator</h2>
+            <p className="text-sm text-[#5C7089] font-body">Every year you wait to invest can cost lakhs of rupees in future wealth. See the impact of delaying your SIP.</p>
           </div>
         </div>
 
-        <div className="space-y-5">
-          <div className="h-48">
+        <div className="grid md:grid-cols-2 gap-8">
+          <div className="space-y-5">
+            <SyncedNumberInput label="Monthly SIP Amount" value={monthlySIP} min={1000} max={200000} step={1000} inputType="currency" setter={setMonthlySIP} accent="#00448B" />
+            <SyncedNumberInput label="Expected Annual Return" value={returnRate} min={6} max={18} step={0.5} inputType="percentage" setter={setReturnRate} accent="#FF6100" />
+            <SyncedNumberInput label="Target Investment Duration" value={investmentYears} min={5} max={40} step={1} inputType="years" setter={setInvestmentYears} accent="#00448B" />
+
+            <div>
+              <label className="block text-sm font-heading font-semibold text-[#0F1C2E] mb-3">Delay Before Starting</label>
+              <div className="grid grid-cols-5 gap-2">
+                {[0, 1, 3, 5, 10].map((delay) => (
+                  <button
+                    key={delay}
+                    onClick={() => setDelayYears(delay)}
+                    className="py-2 rounded-lg text-sm font-heading font-semibold transition-all"
+                    style={delayYears === delay
+                      ? { background: '#00448B', color: 'white' }
+                      : { background: '#EBF2FA', color: '#00448B' }}>
+                    {delay}y
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={chartData}>
                 <defs>
-                  <linearGradient id="gp1" x1="0" y1="0" x2="0" y2="1">
+                  <linearGradient id="cd1" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="#00448B" stopOpacity={0.2} />
+                    <stop offset="95%" stopColor="#00448B" stopOpacity={0} />
+                  </linearGradient>
+                  <linearGradient id="cd2" x1="0" y1="0" x2="0" y2="1">
                     <stop offset="5%" stopColor="#FF6100" stopOpacity={0.2} />
                     <stop offset="95%" stopColor="#FF6100" stopOpacity={0} />
                   </linearGradient>
@@ -594,24 +609,123 @@ function GoalPlanningCalc() {
                 <XAxis dataKey="year" tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} />
                 <YAxis tick={{ fontSize: 10, fill: '#9BAEC8' }} axisLine={false} tickLine={false} tickFormatter={formatCr} width={65} />
                 <Tooltip formatter={(v: any) => formatCr(Number(v))} contentStyle={tooltipStyle} />
-                <Area type="monotone" dataKey="value" name="Projected" stroke="#FF6100" strokeWidth={2.5} fill="url(#gp1)" />
-                <Area type="monotone" dataKey="goal" name="Goal" stroke="#00448B" strokeWidth={2} strokeDasharray="5 5" fill="none" />
+                <Legend wrapperStyle={{ fontSize: '12px' }} />
+                <Area type="monotone" dataKey="Start Today" stroke="#00448B" strokeWidth={2.5} fill="url(#cd1)" />
+                <Area type="monotone" dataKey="Start Later" stroke="#FF6100" strokeWidth={2} fill="url(#cd2)" />
               </AreaChart>
             </ResponsiveContainer>
           </div>
-          <div className="space-y-2">
-            {[
-              { label: 'Total Invested', value: totalInvested, color: '#0F1C2E' },
-              { label: 'Returns', value: Math.max(0, totalReturns), color: '#16A34A' },
-              { label: 'Goal Amount', value: goalAmount, color: '#FF6100' },
-            ].map((r) => (
-              <div key={r.label} className="flex justify-between items-center py-2 border-b border-[#DDE5F0] last:border-0">
-                <span className="text-sm font-body text-[#5C7089]">{r.label}</span>
-                <span className="font-heading font-bold text-sm" style={{ color: r.color }}>{formatCr(r.value)}</span>
-              </div>
-            ))}
+        </div>
+      </div>
+
+      {/* Visual Comparison Cards */}
+      <div className="grid md:grid-cols-2 gap-6">
+        <div className="rounded-2xl p-6 border-2" style={{ borderColor: '#00448B', background: '#EBF2FA' }}>
+          <h3 className="text-sm font-heading font-bold text-[#00448B] uppercase tracking-wide mb-4">Start Today</h3>
+          <div className="space-y-3">
+            <div>
+              <p className="text-xs text-[#5C7089] font-body mb-1">Monthly SIP</p>
+              <p className="text-lg font-heading font-bold text-[#00448B]">₹{monthlySIP.toLocaleString('en-IN')}</p>
+            </div>
+            <div>
+              <p className="text-xs text-[#5C7089] font-body mb-1">Years Invested</p>
+              <p className="text-lg font-heading font-bold text-[#00448B]">{yearsImmediately}</p>
+            </div>
+            <div className="pt-2 border-t border-[#DDE5F0]">
+              <p className="text-xs text-[#5C7089] font-body mb-1">Future Value</p>
+              <p className="text-2xl font-heading font-extrabold text-[#00448B]">{formatCr(futureValueImmediate)}</p>
+            </div>
           </div>
         </div>
+
+        <div className="rounded-2xl p-6 border-2" style={{ borderColor: '#FF6100', background: '#FFF3EB' }}>
+          <h3 className="text-sm font-heading font-bold text-[#FF6100] uppercase tracking-wide mb-4">Start After {delayYears} Year{delayYears > 1 ? 's' : ''}</h3>
+          <div className="space-y-3">
+            <div>
+              <p className="text-xs text-[#5C7089] font-body mb-1">Monthly SIP</p>
+              <p className="text-lg font-heading font-bold text-[#FF6100]">₹{monthlySIP.toLocaleString('en-IN')}</p>
+            </div>
+            <div>
+              <p className="text-xs text-[#5C7089] font-body mb-1">Years Invested</p>
+              <p className="text-lg font-heading font-bold text-[#FF6100]">{yearsDelayed}</p>
+            </div>
+            <div className="pt-2 border-t border-[#FFD9B8]">
+              <p className="text-xs text-[#5C7089] font-body mb-1">Future Value</p>
+              <p className="text-2xl font-heading font-extrabold text-[#FF6100]">{formatCr(futureValueDelayed)}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Cost of Delay Highlight */}
+      <div className="rounded-2xl p-6 border-2" style={{ borderColor: '#DC2626', background: '#FEF2F2' }}>
+        <h3 className="text-sm font-heading font-bold text-[#DC2626] uppercase tracking-wide mb-4">💰 Cost of Delay</h3>
+        <div className="grid md:grid-cols-2 gap-6">
+          <div>
+            <p className="text-xs text-[#5C7089] font-body mb-1">Wealth Lost</p>
+            <p className="text-3xl font-heading font-extrabold text-[#DC2626]">{formatCr(costOfDelay)}</p>
+          </div>
+          <div>
+            <p className="text-xs text-[#5C7089] font-body mb-1">Percentage Loss</p>
+            <p className="text-3xl font-heading font-extrabold text-[#DC2626]">{percentageLoss.toFixed(1)}%</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Insight Box */}
+      <div className="rounded-2xl p-6" style={{ background: 'linear-gradient(135deg, #00448B 0%, #002A62 100%)', color: 'white' }}>
+        <h3 className="text-sm font-heading font-bold uppercase tracking-wide mb-3 text-blue-200">Key Insight</h3>
+        <p className="text-lg font-heading font-semibold leading-relaxed">{insightMessage}</p>
+      </div>
+
+      {/* Result Cards */}
+      <div className="grid md:grid-cols-4 gap-4">
+        <div className="rounded-xl p-4" style={{ background: '#EBF2FA' }}>
+          <p className="text-xs text-[#5C7089] font-body mb-2">Future Wealth<br />(Start Today)</p>
+          <p className="font-heading font-bold text-[#00448B]">{formatCr(futureValueImmediate)}</p>
+        </div>
+        <div className="rounded-xl p-4" style={{ background: '#FFF3EB' }}>
+          <p className="text-xs text-[#5C7089] font-body mb-2">Future Wealth<br />(Delayed Start)</p>
+          <p className="font-heading font-bold text-[#FF6100]">{formatCr(futureValueDelayed)}</p>
+        </div>
+        <div className="rounded-xl p-4" style={{ background: '#FEF2F2' }}>
+          <p className="text-xs text-[#5C7089] font-body mb-2">Cost of<br />Delay</p>
+          <p className="font-heading font-bold text-[#DC2626]">{formatCr(costOfDelay)}</p>
+        </div>
+        <div className="rounded-xl p-4" style={{ background: '#F0FDF4' }}>
+          <p className="text-xs text-[#5C7089] font-body mb-2">Years Lost to<br />Compounding</p>
+          <p className="font-heading font-bold text-[#16A34A]">{delayYears}</p>
+        </div>
+      </div>
+
+      {/* Educational Section */}
+      <div className="rounded-2xl p-6" style={{ background: '#F7F9FC', borderLeft: '4px solid #00448B' }}>
+        <h3 className="text-sm font-heading font-bold text-[#00448B] uppercase tracking-wide mb-4">Why Does Delaying Matter?</h3>
+        <ul className="space-y-3 text-sm text-[#5C7089] font-body">
+          <li className="flex gap-3">
+            <span className="text-[#00448B] font-bold flex-shrink-0">1.</span>
+            <span><strong>Compounding works best when given more time.</strong> The longer your money stays invested, the more it grows exponentially.</span>
+          </li>
+          <li className="flex gap-3">
+            <span className="text-[#00448B] font-bold flex-shrink-0">2.</span>
+            <span><strong>Even if you invest the same monthly amount, a delayed start gives your money fewer years to grow.</strong> Each lost year is irreplaceable.</span>
+          </li>
+          <li className="flex gap-3">
+            <span className="text-[#00448B] font-bold flex-shrink-0">3.</span>
+            <span><strong>Starting early is often more important than investing a larger amount later.</strong> Your 10,000 today is worth more than 20,000 five years from now.</span>
+          </li>
+        </ul>
+      </div>
+
+      {/* Call to Action */}
+      <div className="rounded-2xl p-8 text-center" style={{ background: 'linear-gradient(135deg, #FF6100 0%, #DC2626 100%)', color: 'white' }}>
+        <h3 className="text-xl font-heading font-bold mb-3">Ready to Stop Delaying?</h3>
+        <p className="text-sm font-body mb-6 opacity-90">
+          Let's create an investment plan that works for your goals and timeline.
+        </p>
+        <Link to="/contact" className="inline-flex items-center gap-2 bg-white text-[#FF6100] px-6 py-3 rounded-lg font-heading font-bold text-sm hover:bg-blue-50 transition-colors">
+          Book Free Consultation <ArrowRight size={16} />
+        </Link>
       </div>
     </div>
   );
@@ -655,22 +769,10 @@ function WealthGrowthCalc() {
 
       <div className="grid md:grid-cols-2 gap-8">
         <div className="space-y-5">
-          {[
-            { label: 'Initial Investment', value: initialAmount, min: 0, max: 5000000, step: 50000, fmt: (v: number) => `\u20B9${v.toLocaleString('en-IN')}`, setter: setInitialAmount, accent: '#00448B' },
-            { label: 'Monthly SIP', value: monthlySIP, min: 1000, max: 100000, step: 1000, fmt: (v: number) => `\u20B9${v.toLocaleString('en-IN')}`, setter: setMonthlySIP, accent: '#FF6100' },
-            { label: 'Expected Return', value: returnRate, min: 6, max: 18, step: 0.5, fmt: (v: number) => `${v}%`, setter: setReturnRate, accent: '#16A34A' },
-            { label: 'Duration', value: years, min: 1, max: 30, step: 1, fmt: (v: number) => `${v} years`, setter: setYears, accent: '#00448B' },
-          ].map(({ label, value, min, max, step, fmt, setter, accent }) => (
-            <div key={label}>
-              <div className="flex justify-between items-center mb-2">
-                <label className="text-sm font-heading font-semibold text-[#0F1C2E]">{label}</label>
-                <span className="text-sm font-heading font-bold" style={{ color: accent }}>{fmt(value)}</span>
-              </div>
-              <input type="range" min={min} max={max} step={step} value={value}
-                onChange={(e) => setter(Number(e.target.value))}
-                className="w-full h-2 rounded-full cursor-pointer" style={{ accentColor: accent }} />
-            </div>
-          ))}
+          <SyncedNumberInput label="Initial Investment" value={initialAmount} min={0} max={5000000} step={50000} inputType="currency" setter={setInitialAmount} accent="#00448B" />
+          <SyncedNumberInput label="Monthly SIP" value={monthlySIP} min={1000} max={100000} step={1000} inputType="currency" setter={setMonthlySIP} accent="#FF6100" />
+          <SyncedNumberInput label="Expected Return" value={returnRate} min={6} max={18} step={0.5} inputType="percentage" setter={setReturnRate} accent="#16A34A" />
+          <SyncedNumberInput label="Duration" value={years} min={1} max={30} step={1} inputType="years" setter={setYears} accent="#00448B" />
 
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-xl p-4" style={{ background: '#EBF2FA' }}>
@@ -744,7 +846,7 @@ export default function Calculators() {
     { label: 'FD Real Return', icon: TrendingDown },
     { label: 'SIP vs Lump Sum', icon: TrendingUp },
     { label: 'Retirement Corpus', icon: Landmark },
-    { label: 'Goal Planning', icon: Target },
+    { label: 'Cost of Delay', icon: TrendingDown },
     { label: 'Wealth Growth', icon: Sparkles },
   ];
 
@@ -759,9 +861,6 @@ export default function Calculators() {
           </p>
         </div>
       </section>
-
-      {/* Primary calculator moved from Home: Wealth Compounding */}
-      <WealthGrowth />
 
       <section className="bg-white border-b border-[#DDE5F0] sticky top-[64px] z-40">
         <div className="container-max">
@@ -785,7 +884,7 @@ export default function Calculators() {
           {activeTab === 1 && <FDCalc />}
           {activeTab === 2 && <SIPvsLumpSum />}
           {activeTab === 3 && <RetirementCalc />}
-          {activeTab === 4 && <GoalPlanningCalc />}
+          {activeTab === 4 && <CostOfDelaySIPCalc />}
           {activeTab === 5 && <WealthGrowthCalc />}
         </div>
       </section>
